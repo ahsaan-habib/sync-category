@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -32,10 +33,18 @@ class CategoryController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'time' => 'nullable|date',
+            'time' => 'nullable|date_format:Y-m-d\TH:i',
         ]);
 
-        Category::create($request->all());
+        // Parse and format the input time to the desired format
+        $formattedTime = Carbon::createFromFormat('Y-m-d\TH:i', $request->input('time'))->format('Y-m-d H:i:s');
+
+        // Add the formatted time to the request data
+        $requestData = $request->all();
+        $requestData['time'] = $formattedTime;
+
+        // Create the category using the modified request data
+        Category::create($requestData);
 
         return redirect()->route('categories.index')->with('success', 'Category created successfully.');
     }
@@ -64,10 +73,21 @@ class CategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'time' => 'nullable|date',
+            'time' => 'nullable|date_format:Y-m-d\TH:i',
         ]);
 
-        $category->update($request->all());
+        // Parse and format the input time to the desired format
+        $formattedTime = null;
+        if ($request->has('time')) {
+            $formattedTime = Carbon::createFromFormat('Y-m-d\TH:i', $request->input('time'))->format('Y-m-d H:i:s');
+        }
+
+        // Update the category with the modified request data
+        $category->update([
+            'name' => $request->input('name'),
+            'time' => $formattedTime,
+        ]);
+
         return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
     }
 

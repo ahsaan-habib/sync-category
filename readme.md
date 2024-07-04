@@ -1,5 +1,8 @@
 # Running Two Laravel Projects with Scheduler
 
+Functionality Description: Syncing Categories Between Two Projects
+This functionality ensures that categories from one project are synchronized and pushed to another project.
+
 This guide explains how to set up and run two Laravel projects, along with configuring a scheduler to run scheduled tasks.
 
 ## Prerequisites
